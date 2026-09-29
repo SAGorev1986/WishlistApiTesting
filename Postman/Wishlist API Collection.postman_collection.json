@@ -1,0 +1,554 @@
+{
+  "info": {
+    "_postman_id": "5dd46d4f-748e-482e-9962-1adbc8d9218f",
+    "name": "Wishlist API Collection",
+    "description": "### Welcome to Postman! This is your first collection.\n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests  \n• Test your API in real-world scenarios  \n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58593697",
+    "_collection_link": "https://go.postman.co/collection/58593697-5dd46d4f-748e-482e-9962-1adbc8d9218f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Регистрация пользователя",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function() {\n    pm.response.to.have.status(201);\n});\n\npm.test(\"Response has user data\", function() {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData).to.have.property('id');\n    pm.expect(jsonData).to.have.property('username');\n});\n\n// Сохраняем userId для следующих запросов\nconst jsonData = pm.response.json();\npm.environment.set('userId', jsonData.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"autotest_2024_001\",\r\n  \"email\": \"autotest_2024_001@test.com\",\r\n  \"password\": \"StrongPass123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/auth/register",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+          },
+          "response": []
+        },
+        {
+          "name": "Авторизация (получение токена)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function() {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response has token\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('token');\r\n});\r\n\r\n// Автоматически сохраняем токен в переменные окружения\r\nconst jsonData = pm.response.json();\r\npm.environment.set('token', jsonData.token);\r\nconsole.log('Token saved:', jsonData.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"autotest_2024_001\",\r\n  \"password\": \"StrongPass123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/auth/login",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Wishlists",
+      "item": [
+        {
+          "name": "Создание подарка",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Тест 1: Проверяем статус-код\r\npm.test(\"Status code is 201\", function() {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\n// Тест 2: Проверяем что ответ содержит ID подарка\r\npm.test(\"Response has gift ID\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('id');\r\n    pm.expect(jsonData.id).to.be.a('string');\r\n});\r\n\r\n// Тест 3: Проверяем что ответ содержит name\r\npm.test(\"Response has gift name\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('name');\r\n    pm.expect(jsonData.name).to.equal('iPhone 15 Pro');\r\n});\r\n\r\n// Тест 4: Проверяем что ответ содержит description\r\npm.test(\"Response has gift description\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('description');\r\n});\r\n\r\n// Тест 5: Проверяем что ответ содержит price\r\npm.test(\"Response has gift price\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('price');\r\n    pm.expect(jsonData.price).to.equal(150000);\r\n});\r\n\r\n// Тест 6: Автоматически сохраняем ID подарка\r\nconst jsonData = pm.response.json();\r\npm.environment.set('giftId', jsonData.id);\r\nconsole.log('Gift ID saved:', jsonData.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Новый iPhone\",\r\n  \"description\": \"iPhone 17 Pro Max 256GB\",\r\n  \"imageUrl\": \"https://example.com/iphone.jpg\",\r\n  \"storeUrl\": \"https://example.com/store\",\r\n  \"price\": 150000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/gifts/wishlist/bb3f1280-ede1-4852-a16a-9ff7b4b328c4",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "gifts",
+                "wishlist",
+                "bb3f1280-ede1-4852-a16a-9ff7b4b328c4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Создание списка желаний",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function() {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Response has wishlist data\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('id');\r\n    pm.expect(jsonData).to.have.property('name');\r\n});\r\n\r\n// Сохраняем ID списка для следующих запросов\r\nconst jsonData = pm.response.json();\r\npm.environment.set('wishlistId', jsonData.id);\r\nconsole.log('Wishlist ID saved:', jsonData.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "   {\r\n     \"title\": \"Мой тестовый список\",\r\n     \"description\": \"Описание для теста\"\r\n   }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/wishlists",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "wishlists"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Gifts",
+      "item": [
+        {
+          "name": "Получение подарка по id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function() {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response has gift data\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('id');\r\n    pm.expect(jsonData).to.have.property('name');\r\n    pm.expect(jsonData.name).to.equal('Новый iPhone');\r\n});\r\n\r\npm.test(\"Response has price\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('price');\r\n    pm.expect(jsonData.price).to.equal(150000);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/gifts/8fad64a8-0d29-4ea0-9392-a943fe8f253e",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "gifts",
+                "8fad64a8-0d29-4ea0-9392-a943fe8f253e"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Резервирование подарка",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function() {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Gift is now reserved\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData.reserved).to.be.true;\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/gifts/8fad64a8-0d29-4ea0-9392-a943fe8f253e/reserve",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "gifts",
+                "8fad64a8-0d29-4ea0-9392-a943fe8f253e",
+                "reserve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Обновление подарка",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Тест 1: Проверяем статус-код\r\npm.test(\"Status code is 200\", function() {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// Тест 2: Проверяем что имя обновилось\r\npm.test(\"Gift name is updated\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('name');\r\n    pm.expect(jsonData.name).to.equal('iPhone 16 Pro');\r\n});\r\n\r\n// Тест 3: Проверяем что описание обновилось\r\npm.test(\"Gift description is updated\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('description');\r\n    pm.expect(jsonData.description).to.equal('Обновленный iPhone');\r\n});\r\n\r\n// Тест 4: Проверяем что цена обновилась\r\npm.test(\"Gift price is updated\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('price');\r\n    pm.expect(jsonData.price).to.equal(160000);\r\n});\r\n\r\n// Тест 5: Проверяем что imageUrl обновился\r\npm.test(\"Gift imageUrl is updated\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property('imageUrl');\r\n    pm.expect(jsonData.imageUrl).to.equal('https://example.com/iphone16.jpg');\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"iPhone 16 Pro\",\r\n  \"description\": \"Обновленный iPhone\",\r\n  \"imageUrl\": \"https://example.com/iphone16.jpg\",\r\n  \"storeUrl\": \"https://example.com/store16\",\r\n  \"price\": 160000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/gifts/8fad64a8-0d29-4ea0-9392-a943fe8f253e",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "gifts",
+                "8fad64a8-0d29-4ea0-9392-a943fe8f253e"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Удаление подарка",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204 or 200\", function() {\r\n    pm.response.to.have.status.oneOf([204, 200]);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/gifts/8fad64a8-0d29-4ea0-9392-a943fe8f253e",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "gifts",
+                "8fad64a8-0d29-4ea0-9392-a943fe8f253e"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Удаление списка",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204 or 200\", function() {\r\n    pm.response.to.have.status.oneOf([204, 200]);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/wishlists/bb3f1280-ede1-4852-a16a-9ff7b4b328c4",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "wishlists",
+                "bb3f1280-ede1-4852-a16a-9ff7b4b328c4"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Получение всех пользователей",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Тест 1: Проверяем статус-код\r\npm.test(\"Status code is 200\", function() {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// Тест 2: Проверяем что ответ является массивом\r\npm.test(\"Response is an array\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.be.an('array');\r\n});\r\n\r\n// Тест 3: Проверяем что массив не пустой\r\npm.test(\"Array is not empty\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData.length).to.be.greaterThan(0);\r\n});\r\n\r\n// Тест 4: Проверяем структуру первого пользователя\r\npm.test(\"Response has user structure\", function() {\r\n    const jsonData = pm.response.json();\r\n    const firstUser = jsonData[0];\r\n    pm.expect(firstUser).to.have.property('id');\r\n    pm.expect(firstUser).to.have.property('username');\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/users",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Получение списков пользователя по ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Тест 1: Проверяем статус-код\r\npm.test(\"Status code is 200\", function() {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// Тест 2: Проверяем что ответ является массивом\r\npm.test(\"Response is an array\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.be.an('array');\r\n});\r\n\r\n// Тест 3: Проверяем что у пользователя есть списки\r\npm.test(\"User has wishlists\", function() {\r\n    const jsonData = pm.response.json();\r\n    pm.expect(jsonData.length).to.be.greaterThan(0);\r\n});\r\n\r\n// Тест 4: Проверяем структуру списка\r\npm.test(\"Response has wishlist structure\", function() {\r\n    const jsonData = pm.response.json();\r\n    const firstWishlist = jsonData[0];\r\n    pm.expect(firstWishlist).to.have.property('id');\r\n    pm.expect(firstWishlist).to.have.property('title');\r\n    pm.expect(firstWishlist).to.have.property('owner');\r\n});\r\n\r\n// Тест 5: Проверяем что владелец списка - наш пользователь\r\npm.test(\"Wishlist belongs to correct user\", function() {\r\n    const jsonData = pm.response.json();\r\n    const firstWishlist = jsonData[0];\r\n    pm.expect(firstWishlist.owner.id).to.equal('3019ad44-3787-42a7-9a5b-c2169c526db5');\r\n    pm.expect(firstWishlist.owner.username).to.equal('autotest_2024_001');\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.wishlist.otus.kartushin.su/api/users/3019ad44-3787-42a7-9a5b-c2169c526db5/wishlists",
+              "protocol": "https",
+              "host": [
+                "api",
+                "wishlist",
+                "otus",
+                "kartushin",
+                "su"
+              ],
+              "path": [
+                "api",
+                "users",
+                "3019ad44-3787-42a7-9a5b-c2169c526db5",
+                "wishlists"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_135x",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0i5g",
+      "secret": true
+    }
+  ]
+}

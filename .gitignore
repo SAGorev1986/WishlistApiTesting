@@ -1,0 +1,12 @@
+cat > .gitignore << 'EOF'
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Postman
+*.postman_collection.json.backup
+EOF
